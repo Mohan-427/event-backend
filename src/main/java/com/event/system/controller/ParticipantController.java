@@ -1,5 +1,6 @@
 package com.event.system.controller;
 
+import com.event.system.dto.ParticipantRequest;
 import com.event.system.model.Participant;
 import com.event.system.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,20 @@ public class ParticipantController {
     private ParticipantService service;
 
     @PostMapping
-    public ResponseEntity<Participant> register(@RequestBody Participant participant) {
-        return ResponseEntity.ok(service.registerParticipant(participant));
+    public ResponseEntity<Participant> register(@RequestBody ParticipantRequest request) {
+        return ResponseEntity.ok(service.registerParticipant(request));
     }
 
     @GetMapping
     public ResponseEntity<List<Participant>> getAll(@RequestParam(required = false) String query) {
         return ResponseEntity.ok(service.getAllParticipants(query));
+    }
+
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<Participant>> getByEvent(
+            @PathVariable Long eventId,
+            @RequestParam(required = false) String query) {
+        return ResponseEntity.ok(service.getParticipantsByEvent(eventId, query));
     }
 
     @GetMapping("/{id}")
@@ -30,8 +38,8 @@ public class ParticipantController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Participant> update(@PathVariable Long id, @RequestBody Participant participant) {
-        return ResponseEntity.ok(service.updateParticipant(id, participant));
+    public ResponseEntity<Participant> update(@PathVariable Long id, @RequestBody ParticipantRequest details) {
+        return ResponseEntity.ok(service.updateParticipant(id, details));
     }
 
     @DeleteMapping("/{id}")
@@ -41,12 +49,14 @@ public class ParticipantController {
     }
 
     @PatchMapping("/{id}/attendance")
-    public ResponseEntity<Participant> updateAttendance(@PathVariable Long id, @RequestParam boolean status) {
+    public ResponseEntity<Participant> updateAttendance(
+            @PathVariable Long id,
+            @RequestParam boolean status) {
         return ResponseEntity.ok(service.updateAttendance(id, status));
     }
 
-    @GetMapping("/stats")
-    public ResponseEntity<Map<String, Long>> getStats() {
-        return ResponseEntity.ok(service.getDashboardStats());
+    @GetMapping("/event/{eventId}/stats")
+    public ResponseEntity<Map<String, Object>> getEventStats(@PathVariable Long eventId) {
+        return ResponseEntity.ok(service.getEventAttendanceStats(eventId));
     }
 }

@@ -14,6 +14,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     @Column(unique = true, nullable = false)
     private String username;
 
@@ -28,6 +30,6 @@ public class User {
     private Role role;
 
     public enum Role {
-        ADMIN, ORGANIZER, PARTICIPANT
+        ADMIN, ORGANIZER
     }
 }
